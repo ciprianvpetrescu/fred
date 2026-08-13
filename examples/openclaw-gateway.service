@@ -1,0 +1,28 @@
+[Unit]
+Description=OpenClaw Gateway (reference unit template)
+After=network-online.target
+Wants=network-online.target
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+[Service]
+ExecStart=/usr/bin/node /opt/openclaw/dist/index.js gateway --port 18900
+Restart=always
+RestartSec=5
+RestartPreventExitStatus=78
+TimeoutStopSec=30
+TimeoutStartSec=30
+SuccessExitStatus=0 143
+OOMPolicy=continue
+KillMode=control-group
+# Replace with your own key loading (EnvironmentFile= is cleaner):
+Environment=LLM_API_KEY=YOUR_LLM_API_KEY
+Environment=TTS_API_KEY=YOUR_TTS_API_KEY
+Environment=GATEWAY_TOKEN=YOUR_LONG_RANDOM_TOKEN
+Environment=HOME=/home/YOUR_USER
+Environment=OPENCLAW_GATEWAY_PORT=18900
+Environment=OPENCLAW_SERVICE_MARKER=openclaw
+Environment=OPENCLAW_SERVICE_KIND=gateway
+
+[Install]
+WantedBy=default.target
