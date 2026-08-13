@@ -1,4 +1,4 @@
-# SETUP — build your own FRED
+# SETUP: build your own FRED
 
 A step-by-step, provider-agnostic guide. Replace every `YOUR_*` value with your own.
 This is the documented path the reference build took; adapt freely.
@@ -8,7 +8,7 @@ This is the documented path the reference build took; adapt freely.
 - Raspberry Pi 4 (2GB+) or Compute Module 4, or any always-on Linux box.
 - 32GB+ SD card or eMMC, Raspberry Pi OS Lite (64-bit) recommended.
 - A web browser on any device on the LAN for the UI. A USB mic/speaker on the Pi is
-  optional — the UI supports browser-based hold-to-talk and typed messages, and TTS
+  optional, the UI supports browser-based hold-to-talk and typed messages, and TTS
   output can play on the client.
 
 ## 2. Base install
@@ -42,12 +42,12 @@ openssl rand -hex 32
 
 The reference architecture uses a layered bridge:
 
-- **Web UI** (port 8765) — the frontend; hold-to-talk sends audio, typed messages send
+- **Web UI** (port 8765), the frontend; hold-to-talk sends audio, typed messages send
   text, and both can interrupt an in-flight reply (barge-in).
-- **Python bridge** — auth, session routing, the audio/speech queue, barge-in handling.
-- **Node bridge** — a persistent connection to the OpenClaw gateway; forwards messages
+- **Python bridge**: auth, session routing, the audio/speech queue, barge-in handling.
+- **Node bridge**: a persistent connection to the OpenClaw gateway; forwards messages
   and streams replies back, and aborts runs on barge-in.
-- **OpenClaw gateway** — sessions, memory indexing, scheduling, channel routing.
+- **OpenClaw gateway**: sessions, memory indexing, scheduling, channel routing.
 
 Start the gateway with your provider configured, verify it responds, then start the
 bridges. See `examples/openclaw-gateway.service` for the unit template.
@@ -77,7 +77,7 @@ Expose the UI through a Cloudflare quick tunnel so it works outside the LAN:
 cloudflared tunnel --url http://127.0.0.1:8765
 ```
 
-Put the portal/auth layer in front — see [SECURITY.md](SECURITY.md). Update your
+Put the portal/auth layer in front, see [SECURITY.md](SECURITY.md). Update your
 gateway's `allowedOrigins` whenever the tunnel hostname rotates.
 
 ## 8. Watchdog
@@ -86,7 +86,7 @@ gateway's `allowedOrigins` whenever the tunnel hostname rotates.
 
 - restarts systemd units that are not `active`
 - rotates a session when it grows past a size threshold
-- clears stale provider auth lockouts — **but only when no session has been written
+- clears stale provider auth lockouts, **but only when no session has been written
   recently**, so it never kills an in-flight run
 - verifies the provider key works before doing anything drastic
 
@@ -95,11 +95,10 @@ Schedule it every 2 minutes with a systemd timer (mirroring the reference build)
 ## 9. Troubleshooting
 
 - **No reply / long silence**: check the gateway is reachable, then check the model
-  idle timeout — slow reasoning models need `timeoutSeconds` raised on the provider
+  idle timeout, slow reasoning models need `timeoutSeconds` raised on the provider
   (see the OpenClaw docs). Don't set a cron run timeout below the model's stall window.
 - **Barge-in leaves the UI "speaking"**: the client must acknowledge the audio drain
   (`audio_done` event); otherwise the backend stays in speaking state.
-- **Tunnel works on LAN but not remotely**: absolute-URL APIs break behind tunnels —
-  use same-origin relative URLs everywhere in the frontend.
+- **Tunnel works on LAN but not remotely**: absolute-URL APIs break behind tunnels,   use same-origin relative URLs everywhere in the frontend.
 - **Session bloat**: rotate the session key in the bridge (the watchdog can do this
   automatically).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""fred-watchdog.py — reference self-healing watchdog (sanitized).
+"""fred-watchdog.py: reference self-healing watchdog (sanitized).
 
 Health-checks an assistant stack of systemd user units every couple of minutes
 and repairs what it can, WITHOUT ever interrupting an in-flight run.
@@ -9,7 +9,7 @@ Features
 - Restarts any unit that is not 'active'.
 - Rotates a session key when a session file grows past a size threshold.
 - Clears stale provider auth lockouts, but only when no session file has been
-  written recently (a recent write means a run is in flight — never restart on
+  written recently (a recent write means a run is in flight, never restart on
   top of one).
 - Verifies the provider key actually works before making changes.
 
